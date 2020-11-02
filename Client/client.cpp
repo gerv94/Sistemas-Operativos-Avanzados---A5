@@ -21,8 +21,6 @@ void client::run()
 	std::cout << "Welcome to chat v0.1!\n";
 	createPipe();
 
-	
-
 	// Login
 	info.action = package::login;
 	std::cout << "Enter your name to login:\n";
@@ -53,6 +51,7 @@ void client::run()
 void client::runLogged()
 {
 	char command[64];
+	printMenu();
 	while (true)
 	{
 		std::cout << "\nEnter a command:\n";
@@ -85,12 +84,10 @@ void client::runLogged()
 			getInfo();
 			if (info.ok)
 			{
-				std::cout << "Chat pipe: " << info.content << "\n";
 				runChat(info.content);
 			}
 			else
 			{
-				std::cout << "ERROR!\n";
 				std::cout << info.content << "\n";
 			}
 		}
@@ -108,14 +105,16 @@ void client::runLogged()
 		{
 			info.action = package::accept;
 			sprintf(info.content, "accept");
-
 			sendInfo();
-
 			getInfo();
-
-			std::cout << "Chat pipe: " << info.content << "\n";
-			runChat(info.content);
-
+			if (info.ok)
+			{
+				runChat(info.content);
+			}
+			else
+			{
+				std::cout << info.content << "\n";
+			}
 		}
 		else if (strcmp(command, "/exit") == 0)
 		{
@@ -124,6 +123,7 @@ void client::runLogged()
 		}
 		else
 		{
+			std::cout << "Command not found, check the available commands below:\n";
 			printMenu();
 		}
 
@@ -133,23 +133,23 @@ void client::runLogged()
 	}
 }
 
-void client::runChat(char * chatPipeId){
+void client::runChat(char *chatPipeId)
+{
 	int fd;
 	char chatPipe[64];
 	sprintf(chatPipe, "/tmp/chat%s.pipe", chatPipeId);
 
-	std::cout << "You have been enter to a chat: " << chatPipe << "\n";
+	std::cout << "You have enter to chat: " << chatPipeId << "\n";
 	// Clear buffer
 	std::cin.ignore(10000, '\n');
 	while (true)
 	{
 		std::cin.getline(info.content, sizeof(package::info::content));
 
-		fd = OPEN(chatPipe, O_WRONLY, "An error as ocurred!\n");
-		
+		fd = OPEN(chatPipe, O_WRONLY, "An error has ocurred!\n");
 		write(fd, &info, sizeof(package::info));
 		close(fd);
-	}	
+	}
 }
 
 void client::runConc()
@@ -161,7 +161,6 @@ void client::runConc()
 
 		while (true)
 		{
-
 			fd = OPEN(concPipe, O_RDONLY, "Error: could not open server pipe");
 			read(fd, &inf, sizeof(package::info));
 			close(fd);
@@ -176,8 +175,9 @@ void client::printMenu()
 	std::cout << "\t/help \t\t\t Displays this dialog\n"
 			  << "\t/list \t\t\t List all the available users\n"
 			  << "\t/check \t\t\t Check chat conection requests\n"
+			  << "\t/accept \t\t Accept an incomming chat\n"
 			  << "\t/chat <id|name> \t Connect with a user to start a chat\n"
-			  << "\t/available \t\t\t Make this user available tu chat\n"
+			  << "\t/available \t\t Make this user available to chat\n"
 			  << "\t/exit \t\t\t Closes this session\n";
 }
 
@@ -219,7 +219,7 @@ void client::createPipe()
 	system(cmd);
 }
 
-void client::createPipe(char * pipe)
+void client::createPipe(char *pipe)
 {
 	char cmd[64] = "mkfifo ";
 	strcat(cmd, pipe);

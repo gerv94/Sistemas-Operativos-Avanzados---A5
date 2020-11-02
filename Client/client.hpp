@@ -7,7 +7,13 @@
 
 #include "package.hpp"
 
-#define OPEN(file, flag, message) open(file, flag);if (fd == -1){std::cout << message;exit(1);}
+#define OPEN(file, flag, message) \
+	open(file, flag);             \
+	if (fd == -1)                 \
+	{                             \
+		std::cout << message;     \
+		exit(1);                  \
+	}
 
 class client
 {
@@ -18,7 +24,7 @@ private:
 	char concPipe[64];
 	bool connected;
 	package::info info;
-	const char* server_pipe = "/tmp/server.pipe";
+	const char *server_pipe = "/tmp/server.pipe";
 
 	void createPipe();
 	void createPipe(char *);
@@ -31,6 +37,7 @@ private:
 
 	void getInfo();
 	void sendInfo();
+
 public:
 	client(/* args */);
 	~client();

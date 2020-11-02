@@ -1,4 +1,5 @@
-namespace package {
+namespace package
+{
 	enum e_action
 	{
 		login,
@@ -21,4 +22,4 @@ namespace package {
 		char content[256];
 		bool ok;
 	};
-}
+} // namespace package

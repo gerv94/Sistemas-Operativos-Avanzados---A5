@@ -141,7 +141,8 @@ void server::getInfo()
 				strcat(info.content, "Bussy");
 				break;
 			}
-			if(client.id == info.id){
+			if (client.id == info.id)
+			{
 				strcat(info.content, "\t(You)");
 			}
 			strcat(info.content, "\n");
@@ -161,7 +162,14 @@ void server::getInfo()
 		{
 			if (strcmp(info.content, clients[index].name) == 0)
 			{
-				client_index = index;
+				if (strcmp(clients[index].name, info.content) == 0)
+				{
+					LOG("User (" << info.id << ") is asking to chat with himself");
+				}
+				else
+				{
+					client_index = index;
+				}
 				break;
 			}
 		}
@@ -177,7 +185,7 @@ void server::getInfo()
 
 				clients[client_index].status = pending;
 				clients[client_index].partner = asking_id;
-				sprintf(info.content, "A user is trying to connect with you, type: /check to find out!");
+				sprintf(info.content, "[SERVER] : A user is trying to connect with you, type /check to find out!");
 				sendMessage(info);
 			}
 			else
@@ -204,7 +212,7 @@ void server::getInfo()
 		int partnerIndex = getClientIndex(clients[currentIndex].partner);
 
 		sprintf(info.content, clients[partnerIndex].name);
-		strcat(info.content, " is trying to connect with you, type /accept to start this chat");
+		strcat(info.content, " is trying to contact with you, type /accept to start this chat");
 
 		sendInfo(info);
 		break;
@@ -212,7 +220,7 @@ void server::getInfo()
 	case package::accept:
 	{
 		LOG("User (" << info.id << ") is trying to accept conection");
-		
+
 		int currentIndex = getClientIndex(info.id);
 		// Check if the user indeed have a connection
 		if (clients[currentIndex].status == pending)
