@@ -145,16 +145,8 @@ void client::runChat(char * chatPipeId){
 	{
 		std::cin.getline(info.content, sizeof(package::info::content));
 
-		//fd = OPEN(chatPipe, O_WRONLY, "An error as ocurred!\n");
-		fd = open(chatPipe, O_WRONLY);
-		if (fd == -1) {
-			createPipe(chatPipe);
-			fd = open(chatPipe, O_WRONLY);
-			if (fd == -1) {
-				std::cout << "No tiene arreglo!\n";
-			}
-		}
-
+		fd = OPEN(chatPipe, O_WRONLY, "An error as ocurred!\n");
+		
 		write(fd, &info, sizeof(package::info));
 		close(fd);
 	}	
@@ -221,13 +213,10 @@ void client::createPipe()
 {
 	char cmd[64] = "mkfifo ";
 	strcat(cmd, waitPipe);
+	strcat(cmd, " ");
+	strcat(cmd, concPipe);
 	strcat(cmd, " > /dev/null 2>&1");
 	system(cmd);
-
-	char cmd2[64] = "mkfifo ";
-	strcat(cmd2, concPipe);
-	strcat(cmd2, " > /dev/null 2>&1");
-	system(cmd2);
 }
 
 void client::createPipe(char * pipe)
@@ -242,11 +231,10 @@ void client::deletePipe()
 {
 	char cmd[64] = "rm ";
 	strcat(cmd, waitPipe);
+	strcat(cmd, " ");
+	strcat(cmd, concPipe);
+	strcat(cmd, " > /dev/null 2>&1");
 	system(cmd);
-
-	char cmd2[64] = "rm ";
-	strcat(cmd2, concPipe);
-	system(cmd2);
 }
 
 ///////////////////////////////////////////// [::  Entry Point  ::]

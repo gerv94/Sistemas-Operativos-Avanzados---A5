@@ -132,10 +132,17 @@ void server::getInfo()
 				strcat(info.content, "Available");
 				break;
 			case e_status::messaging:
+				strcat(info.content, "In a chat");
+				break;
 			case e_status::reject:
+				strcat(info.content, "Not available");
+				break;
 			case e_status::pending:
 				strcat(info.content, "Bussy");
 				break;
+			}
+			if(client.id == info.id){
+				strcat(info.content, "\t(You)");
 			}
 			strcat(info.content, "\n");
 		}
@@ -205,8 +212,9 @@ void server::getInfo()
 	case package::accept:
 	{
 		LOG("User (" << info.id << ") is trying to accept conection");
-		//TODO: check if the user indeed have a connection
+		
 		int currentIndex = getClientIndex(info.id);
+		// Check if the user indeed have a connection
 		if (clients[currentIndex].status == pending)
 		{
 			int partnerIndex = getClientIndex(clients[currentIndex].partner);
@@ -314,6 +322,8 @@ void server::deletePipe()
 {
 	char cmd[64] = "rm ";
 	strcat(cmd, pipe);
+	strcat(cmd, " /tmp/chat*.pipe");
+	strcat(cmd, " > /dev/null 2>&1");
 	system(cmd);
 }
 

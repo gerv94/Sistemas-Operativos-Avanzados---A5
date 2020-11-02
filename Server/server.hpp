@@ -16,7 +16,6 @@ enum e_status
 	pending
 };
 
-//TODO change struct name to: client
 /**
  * Structure of a client status
  * int id;
