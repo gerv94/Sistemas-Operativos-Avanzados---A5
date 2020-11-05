@@ -66,9 +66,21 @@ void server::runChat(int id0, int id1)
 				inf.id = id0;
 			}
 
-			sprintf(content, "[%s] : %s ", clients[index].name, inf.content);
-			sprintf(inf.content, content);
-			sendMessage(inf);
+			if (strcmp(inf.content, "/exit") == 0)
+			{
+				deleteChatPipe(chatPipe);
+				sprintf(content, "[SERVER] : %s have left the chat press ENTER to return to menu", clients[index].name);
+				sprintf(inf.content, content);
+				sendMessage(inf);
+				LOG("Chat " << getpid() << " closed");
+				exit(0);
+			}
+			else
+			{
+				sprintf(content, "[%s] : %s ", clients[index].name, inf.content);
+				sprintf(inf.content, content);
+				sendMessage(inf);
+			}
 		}
 	}
 }
@@ -162,7 +174,7 @@ void server::getInfo()
 		{
 			if (strcmp(info.content, clients[index].name) == 0)
 			{
-				if (strcmp(clients[index].name, info.content) == 0)
+				if (clients[index].id == info.id)
 				{
 					LOG("User (" << info.id << ") is asking to chat with himself");
 				}
@@ -321,6 +333,14 @@ void server::createPipe()
 void server::createChatPipe(char *chatPipe)
 {
 	char cmd[64] = "mkfifo ";
+	strcat(cmd, chatPipe);
+	strcat(cmd, " > /dev/null 2>&1");
+	system(cmd);
+}
+
+void server::deleteChatPipe(char *chatPipe)
+{
+	char cmd[64] = "rm ";
 	strcat(cmd, chatPipe);
 	strcat(cmd, " > /dev/null 2>&1");
 	system(cmd);

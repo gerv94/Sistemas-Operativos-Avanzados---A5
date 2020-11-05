@@ -52,6 +52,7 @@ private:
 	void createPipe();
 	void deletePipe();
 	void createChatPipe(char *);
+	void deleteChatPipe(char *);
 	void runPipe(int);
 	void runChat(int, int);
 

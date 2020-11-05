@@ -146,10 +146,17 @@ void client::runChat(char *chatPipeId)
 	{
 		std::cin.getline(info.content, sizeof(package::info::content));
 
-		fd = OPEN(chatPipe, O_WRONLY, "An error has ocurred!\n");
+		//fd = OPEN(chatPipe, O_WRONLY, "An error has ocurred!\n");
+		fd = open(chatPipe, O_WRONLY);
+		if (fd == -1)
+		{
+			break;
+		}
 		write(fd, &info, sizeof(package::info));
 		close(fd);
 	}
+
+	std::cout << "You have exit the chat\n";
 }
 
 void client::runConc()
